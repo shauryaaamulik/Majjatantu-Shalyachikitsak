@@ -2,7 +2,7 @@
 
 **Autonomous neural-network debugging, causal interpretability and weight-space repair.**
 
-> *Majja-tantu* ≈ "marrow / nerve-fibre" · *Shalyachikitsak* ≈ "surgeon". A surgeon for the fibres inside a neural network.
+> *Majja-tantu* ≈ "nerve-fibre" · *Shalyachikitsak* ≈ "surgeon". A surgeon for the fibres inside a neural network.
 
 **Status:** Research & development — proposed. Nothing here is a result yet. This repository currently contains the project plan only; no code has been written.
 **Fields:** Deep learning · Mechanistic interpretability · Weight-space programming · Autonomous agents · Model editing · Causal inference
