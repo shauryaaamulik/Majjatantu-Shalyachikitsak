@@ -33,6 +33,9 @@ the existing pydantic records), so it runs and is tested without a GPU or model 
 - Dense direction ablation (`diffmeans_all`) lowers target error but costs ≈7% retention and 43% of parameters; the gate rejects it.
 - Gate bug caught while running: a 5% toy parameter cap rejected a perfect 8-unit repair (5.3%); cap set to 6%.
 
+#### CI
+- `.github/workflows/ci.yml` runs the torch-free synthetic tests and a 5-seed experiment smoke on every push.
+
 #### Verification status
 - Torch is **not installable** in this session's sandbox (package index unreachable), so the torch-based modules and their tests from 0.1.0 were **not re-run** here. New synthetic tests: 13/13 pass.
 
