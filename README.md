@@ -4,7 +4,7 @@
 
 > *Majja-tantu* ≈ "nerve-fibre" · *Shalyachikitsak* ≈ "surgeon". A surgeon for the fibres inside a neural network.
 
-**Status:** Research & development — proposed. Nothing here is a result yet. This repository currently contains the project plan only; no code has been written.
+**Status:** Research & development — Phase I scaffolding started. No empirical repair results yet; the package layout, introspection toolkit, direction-ablation operator, and evaluation harness are in place. See [`CHANGELOG.md`](CHANGELOG.md) for what landed.
 **Fields:** Deep learning · Mechanistic interpretability · Weight-space programming · Autonomous agents · Model editing · Causal inference
 
 ---
@@ -228,24 +228,26 @@ The first implementation targets **one** architecture before expanding.
 
 ## 12. Repository structure
 
-Intended layout; it will change as experiments reveal better designs. None of this exists yet.
+Intended layout (Phase I scaffolding is present; deeper subsystems fill in across later phases). See `CHANGELOG.md` for implementation status.
 
 ```
-majjatantu/
+Majjatantu-Shalyachikitsak/
 ├── README.md
+├── CHANGELOG.md              # human + AI collaborator change log
 ├── pyproject.toml
 ├── configs/
+│   └── phase1_defaults.yaml
 ├── src/majjatantu/
-│   ├── models/
-│   ├── introspection/
-│   ├── failure_detection/
-│   ├── causal_localization/
-│   ├── agent/
-│   ├── weight_surgery/
-│   ├── optimization/
-│   ├── evaluation/
-│   ├── orchestration/
-│   └── reporting/
+│   ├── models/               # loader + checkpoint hash + rollback
+│   ├── introspection/        # weight summaries, activation capture
+│   ├── failure_detection/    # loop / repetition detector
+│   ├── causal_localization/  # patching helpers (Phase II expands)
+│   ├── agent/                # Phase III placeholder
+│   ├── weight_surgery/       # direction ablation (gradient-free)
+│   ├── optimization/         # Phase III placeholder
+│   ├── evaluation/           # harness + regression gates
+│   ├── orchestration/        # budgets, edit recording, rollback
+│   └── reporting/            # JSONL edit log
 ├── experiments/
 │   ├── synthetic_failures/
 │   ├── repetition_repair/      # reproduces the loop-fix idea from the paper's Exp. 8
@@ -255,8 +257,9 @@ majjatantu/
 ├── benchmarks/
 ├── tests/
 ├── notebooks/
-├── frontend/
+├── frontend/                 # not started
 ├── scripts/
+│   └── smoke_direction_ablation.py
 ├── docs/
 └── research/
 ```
@@ -293,6 +296,8 @@ majjatantu/
 ## 15. Notes for AI collaborators
 
 Context for any AI assistant (or new contributor) working in this repo.
+
+**Before you change anything:** read [`CHANGELOG.md`](CHANGELOG.md). Append a dated entry for every substantive change (new module, bugfix, README correction, failed experiment). Keep entries concrete so the next agent can resume without re-deriving context.
 
 **Hard constraints**
 - Repairs are **gradient-free**. Do not introduce training loops into the repair path; gradient methods are baselines only.

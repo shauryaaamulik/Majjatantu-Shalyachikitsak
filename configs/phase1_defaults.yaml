@@ -1,0 +1,32 @@
+# Phase I default experiment settings
+# Forward-pass budget is a first-class, logged resource (README §4, §9, §15).
+
+experiment:
+  name: phase1_direction_ablation_smoke
+  max_forward_passes: 50
+  max_param_fraction: 0.001
+
+model:
+  # Tiny local models for unit/smoke tests; swap for Qwen/SmolLM in real runs.
+  name_or_path: sshleifer/tiny-gpt2
+  device: cpu
+  trust_remote_code: false
+
+failure_detection:
+  category: repetitive_reasoning_loops
+  max_new_tokens: 128
+  repetition_threshold: 0.25
+
+repair:
+  operator: direction_ablation
+  strength: 1.0
+  # columns: null means all columns; for Exp. 8 style edits use a slice of 64.
+
+evaluation:
+  splits: [dev, val]
+  # test split is owned by orchestration — never exposed to the repair agent
+  max_regression: 0.05
+  min_target_improvement: 0.0
+
+logging:
+  edit_log_dir: artifacts/edit_logs
