@@ -29,6 +29,7 @@ MAJJATANTU is a planned research framework in which an AI agent **finds why a ne
 10. [Major research challenges](#10-major-research-challenges)
 11. [Technical stack](#11-technical-stack)
 12. [Repository structure](#12-repository-structure)
+    - [12a. Current results (synthetic testbed only)](#12a-current-results-synthetic-testbed-only)
 13. [Roadmap](#13-roadmap)
 14. [Limitations and honest caveats](#14-limitations-and-honest-caveats)
 15. [Notes for AI collaborators](#15-notes-for-ai-collaborators)
@@ -246,15 +247,17 @@ Majjatantu-Shalyachikitsak/
 │   ├── weight_surgery/       # direction ablation (gradient-free)
 │   ├── optimization/         # Phase III placeholder
 │   ├── evaluation/           # harness + regression gates
+│   ├── synthetic/            # torch-free planted-defect testbed (NumPy)
 │   ├── orchestration/        # budgets, edit recording, rollback
 │   └── reporting/            # JSONL edit log
 ├── experiments/
-│   ├── synthetic_failures/
+│   ├── synthetic_failures/     # run.py: strategy comparison on the planted-defect testbed
 │   ├── repetition_repair/      # reproduces the loop-fix idea from the paper's Exp. 8
 │   ├── factual_editing/
 │   ├── reasoning_failures/
 │   └── cross_model_transfer/
 ├── benchmarks/
+├── results/                  # generated result tables (synthetic_failures.md)
 ├── tests/
 ├── notebooks/
 ├── frontend/                 # not started
@@ -263,6 +266,30 @@ Majjatantu-Shalyachikitsak/
 ├── docs/
 └── research/
 ```
+
+## 12a. Current results (synthetic testbed only)
+
+`src/majjatantu/synthetic/` is a small NumPy model with a **planted** defect: a few spare hidden units become a trigger detector that pushes predictions to one wrong class, so the correct fix is known exactly. It exercises the full loop (failure discovery → causal localization → gradient-free edit → regression/budget/save-reload checks → logged accept/reject) at equal forward-pass budgets. Reproduce with:
+
+```bash
+pip install -e ".[dev]"
+python experiments/synthetic_failures/run.py --seeds 30 --out results/synthetic_failures.md
+python -m pytest tests/test_synthetic.py      # torch-free; the rest of the suite needs torch
+```
+
+Headline (30 seeds, 4 planted units, test split; full tables in [`results/synthetic_failures.md`](results/synthetic_failures.md)):
+
+| Strategy | Forward passes needed | Outcome |
+|---|---|---|
+| Random columns (control) | 0 | no repair |
+| Activation-difference direction ablation on top-k columns (non-LLM baseline 5) | 1 | accepted in 100% of trials; test error 0.73 → 0.05 |
+| Same direction ablated from *all* columns | 1 | error 0.09 but ~7% accuracy lost elsewhere and 43% of parameters touched, so rejected |
+| Causal patching, zero top-k columns | ≈ 66 for full ranking | exact repair (error 0.00) at budget 100; accepted 33% at 50 and 0% at ≤ 25 |
+
+What this does and does **not** show:
+- The harness behaves as designed: budgets are enforced, every edit is logged, over-budget and regressing edits are rejected, the test split is revealed only after decisions.
+- Edit quality depends strongly on the forward-pass budget for the causal method, echoing the paper's budget sensitivity.
+- On this deliberately easy defect, the cheap non-LLM baseline matches the expensive causal method on acceptance. That is consistent with the sceptical reading in §14 and is exactly why the baselines exist. It is **not** evidence about real language models, and the planted defect is far cleaner than natural failures.
 
 ## 13. Roadmap
 

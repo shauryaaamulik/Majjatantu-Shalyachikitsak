@@ -24,10 +24,11 @@ def run_trial(
     strategies: dict[str, Strategy] | None = None,
     gate: SyntheticGate | None = None,
     log_path: str | Path | None = None,
+    defect_kwargs: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     strategies = strategies or STRATEGIES
     gate = gate or SyntheticGate()
-    pf = make_planted_failure(seed)
+    pf = make_planted_failure(seed, **(defect_kwargs or {}))
     splits = make_splits(pf, seed)
     base = pf.corrupted
     truth = set(pf.defect.units)

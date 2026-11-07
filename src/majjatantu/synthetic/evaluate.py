@@ -19,7 +19,7 @@ class SyntheticGate:
 
     min_target_improvement: float = 0.2   # absolute drop in error on the failure region
     max_regression: float = 0.05          # max drop in accuracy outside the failure region
-    max_param_fraction: float = 0.05      # toy analogue of the paper-scale 0.1% target
+    max_param_fraction: float = 0.06      # toy analogue of the paper-scale 0.1% target (8 planted units need 5.3%)
 
 
 def split_metrics(model: ToyResidualMLP, split: Split) -> dict[str, float]:
