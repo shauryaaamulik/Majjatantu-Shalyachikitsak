@@ -7,6 +7,26 @@ Format: reverse-chronological. Each entry notes phase, intent, and hard-constrai
 
 ---
 
+## [0.2.0] — 2026-11-07 (in progress)
+
+### Synthetic testbed with planted ground-truth defect (Claude session)
+
+Implements the "Synthetic corruption experiment with known ground-truth direction" item
+from *Planned next*. Lives in `src/majjatantu/synthetic/` and is **torch-free** (NumPy +
+the existing pydantic records), so it runs and is tested without a GPU or model download.
+
+#### Added
+- `synthetic/toy_model.py` — residual MLP; `W_out` has the same [out, in] layout as an MLP output projection. Forward passes are charged to the existing `ForwardPassBudget` (1 batch call = 1 pass).
+- `synthetic/planted.py` — plants a trigger-detector defect in spare hidden units; ground truth (units, write direction, trigger) is known; `Splits` keeps the test split behind `reveal_test()`.
+- `synthetic/discovery.py` — failure-slice discovery (Wilson lower bound) + reproducibility check producing a `FailureReport`.
+- `synthetic/localization.py` — per-unit activation patching, *anytime* under a budget.
+- `synthetic/repair.py` — gradient-free operators (`ablate_direction` mirrors `weight_surgery.direction_ablation` semantics; `zero_columns`) and four strategies: `random_k`, `diffmeans_topk` (README baseline 5), `diffmeans_all`, `causal_k`.
+- `synthetic/evaluate.py`, `synthetic/runner.py` — accept/reject gate (target gain, regression, parameter budget, save/reload stability); every candidate edit, accepted or rejected, is written to the `EditLog`.
+- `tests/test_synthetic.py` — 13 tests.
+
+#### Verification status
+- Torch is **not installable** in this session's sandbox (package index unreachable), so the torch-based modules and their tests from 0.1.0 were **not re-run** here. New synthetic tests: 13/13 pass.
+
 ## [0.1.0] — 2026-11-07
 
 ### Phase I scaffolding (foundations)
